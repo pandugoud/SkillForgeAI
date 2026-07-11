@@ -12,6 +12,7 @@ import AIAssistant from "./pages/AIAssistant";
 import ResumeAnalyzer from "./pages/ResumeAnalyzer";
 import Roadmap from "./pages/Roadmap";
 import Progress from "./pages/Progress";
+import AdminDashboard from "./pages/AdminDashboard";
 
 
 function App() {
@@ -80,6 +81,14 @@ element={<Roadmap/>}
 path="/progress"
 
 element={<Progress/>}
+
+/>
+
+<Route
+
+path="/admin"
+
+element={<AdminDashboard/>}
 
 />
 
