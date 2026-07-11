@@ -8,24 +8,49 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 
+
 function App() {
+
   return (
     <BrowserRouter>
+
       <MainLayout>
+
         <Routes>
-          <Route path="/" element={<Home />} />
 
-          <Route path="/login" element={<Login />} />
+          <Route 
+            path="/" 
+            element={<Home />} 
+          />
 
-          <Route path="/register" element={<Register />} />
+          <Route 
+            path="/login" 
+            element={<Login />} 
+          />
 
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route 
+            path="/register" 
+            element={<Register />} 
+          />
 
-          <Route path="*" element={<NotFound />} />
+          <Route 
+            path="/dashboard" 
+            element={<Dashboard />} 
+          />
+
+          <Route 
+            path="*" 
+            element={<NotFound />} 
+          />
+
         </Routes>
+
       </MainLayout>
+
     </BrowserRouter>
   );
+
 }
+
 
 export default App;
