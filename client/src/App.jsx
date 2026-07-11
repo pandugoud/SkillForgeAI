@@ -8,6 +8,7 @@ import Register from "./pages/Register";
 import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import Tasks from "./pages/Tasks";
+import AIAssistant from "./pages/AIAssistant";
 
 
 function App() {
@@ -47,6 +48,11 @@ function App() {
           <Route
 path="/tasks"
 element={<Tasks/>}
+/>
+
+<Route
+path="/ai"
+element={<AIAssistant/>}
 />
 
         </Routes>
