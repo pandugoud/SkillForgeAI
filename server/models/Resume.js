@@ -1,28 +1,22 @@
-const mongoose = require("mongoose");
+const mongoose=require("mongoose");
 
 
-const resumeSchema = new mongoose.Schema({
+const resumeSchema =
+new mongoose.Schema({
 
 user:{
 type:mongoose.Schema.Types.ObjectId,
-ref:"User",
-required:true
+ref:"User"
 },
 
 
-fileName:{
-type:String
-},
+fileName:String,
 
 
-analysis:{
-type:String
-},
+score:Number,
 
 
-score:{
-type:Number
-}
+analysis:Object
 
 
 },

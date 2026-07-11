@@ -1,3 +1,6 @@
+// server/controllers/resumeController.js
+
+
 const fs = require("fs");
 
 const pdf = require("pdf-parse");
@@ -10,127 +13,293 @@ const Resume = require("../models/Resume");
 
 const client = new Groq({
 
-apiKey:
-process.env.GROQ_API_KEY
+    apiKey: process.env.GROQ_API_KEY
 
 });
 
 
 
 
-exports.analyzeResume = async(req,res)=>{
+
+exports.analyzeResume = async (req, res) => {
 
 
-try{
+    try {
 
 
-const dataBuffer =
-fs.readFileSync(
-req.file.path
-);
+        if (!req.file) {
 
+            return res.status(400).json({
 
+                success:false,
 
-const pdfData =
-await pdf(dataBuffer);
+                message:"Resume PDF required"
 
+            });
 
-
-const resumeText =
-pdfData.text;
+        }
 
 
 
-const completion =
-await client.chat.completions.create({
+        console.log("Uploaded File:", req.file.filename);
 
 
-model:
-"llama-3.1-8b-instant",
+
+        // Read PDF
+
+        const dataBuffer = fs.readFileSync(
+            req.file.path
+        );
 
 
-messages:[
+
+        const pdfData = await pdf(dataBuffer);
 
 
-{
-role:"system",
 
-content:
+        const resumeText = pdfData.text;
+
+
+
+        console.log(
+            "Extracted Text:",
+            resumeText.substring(0,200)
+        );
+
+
+
+        if(!resumeText){
+
+            return res.status(400).json({
+
+                success:false,
+
+                message:"Could not extract text from PDF"
+
+            });
+
+        }
+
+
+
+
+        // AI Analysis
+
+        const completion =
+        await client.chat.completions.create({
+
+
+            model:"llama-3.1-8b-instant",
+
+
+            messages:[
+
+
+                {
+
+                    role:"system",
+
+                    content:
 `
 You are an expert technical recruiter.
-Analyze resumes and provide:
-1. Resume score out of 100
-2. Technical skills
-3. Missing skills
-4. Improvement suggestions
-5. Career roadmap
-`
-},
 
+Analyze the resume.
+
+Return ONLY valid JSON.
+
+Do not use markdown.
+Do not add explanations.
+
+JSON format:
 
 {
-role:"user",
-
-content:resumeText
-
+ "score": number,
+ "skills": [],
+ "missingSkills": [],
+ "strengths": [],
+ "improvements": [],
+ "roadmap": []
 }
 
+Score should be between 0 and 100.
+`
 
-]
-
-
-});
-
+                },
 
 
-const analysis =
-completion
-.choices[0]
-.message
-.content;
+                {
+
+                    role:"user",
+
+                    content:resumeText
+
+                }
 
 
+            ],
 
-const resume =
-await Resume.create({
 
-user:req.user,
+            temperature:0.3
 
-fileName:req.file.filename,
 
-analysis,
-
-score:75
-
-});
+        });
 
 
 
-res.json({
-
-success:true,
-
-resume
-
-});
 
 
-}
-
-catch(error){
-
-
-console.log(error);
-
-
-res.status(500).json({
-
-message:"Resume analysis failed"
-
-});
+        let analysisText =
+        completion
+        .choices[0]
+        .message
+        .content;
 
 
-}
+
+
+        console.log(
+            "AI Response:",
+            analysisText
+        );
+
+
+
+
+
+        // Remove markdown if AI sends ```json
+
+        const cleanJSON =
+        analysisText
+        .replace(/```json/g,"")
+        .replace(/```/g,"")
+        .trim();
+
+
+
+
+
+        let analysis;
+
+
+
+        try {
+
+
+            analysis =
+            JSON.parse(cleanJSON);
+
+
+        }
+
+        catch(error){
+
+
+            console.log(
+                "JSON Parse Failed:"
+            );
+
+
+            console.log(
+                cleanJSON
+            );
+
+
+            return res.status(500).json({
+
+                success:false,
+
+                message:"AI returned invalid JSON"
+
+            });
+
+
+        }
+
+
+
+
+
+        // Save Database
+
+
+        const resume =
+        await Resume.create({
+
+
+            user:req.user,
+
+
+            fileName:req.file.filename,
+
+
+            score:analysis.score,
+
+
+            analysis:analysis
+
+
+        });
+
+
+
+
+
+
+
+        res.json({
+
+
+            success:true,
+
+
+            data:{
+
+
+                score:analysis.score,
+
+
+                analysis:analysis
+
+
+            },
+
+
+            resumeId:resume._id
+
+
+        });
+
+
+
+
+
+    }
+
+    catch(error){
+
+
+        console.error(
+            "Resume Analyzer Error:"
+        );
+
+
+        console.error(error);
+
+
+
+        res.status(500).json({
+
+
+            success:false,
+
+
+            message:error.message
+
+
+        });
+
+
+    }
 
 
 };
