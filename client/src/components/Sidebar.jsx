@@ -70,7 +70,12 @@ className="block hover:text-blue-400"
 Profile
 </Link>
 
-
+<Link
+to="/resume"
+className="block hover:text-blue-400"
+>
+Resume Analyzer
+</Link>
 
 </nav>
 

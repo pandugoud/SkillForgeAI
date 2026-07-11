@@ -9,6 +9,8 @@ import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import Tasks from "./pages/Tasks";
 import AIAssistant from "./pages/AIAssistant";
+import ResumeAnalyzer from "./pages/ResumeAnalyzer";
+import Roadmap from "./pages/Roadmap";
 
 
 function App() {
@@ -53,6 +55,22 @@ element={<Tasks/>}
 <Route
 path="/ai"
 element={<AIAssistant/>}
+/>
+
+<Route
+
+path="/resume"
+
+element={<ResumeAnalyzer/>}
+
+/>
+
+<Route
+
+path="/roadmap"
+
+element={<Roadmap/>}
+
 />
 
         </Routes>
