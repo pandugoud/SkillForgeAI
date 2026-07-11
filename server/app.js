@@ -33,13 +33,13 @@ const app = express();
 // Middleware
 
 app.use(
-    cors({
-        origin:[
-"https://skill-forge-ai-eight.vercel.app/",
-"http://localhost:5173"
-],
-        credentials: true
-    })
+  cors({
+    origin: [
+      "https://skill-forge-ai-eight.vercel.app",
+      "http://localhost:5173"
+    ],
+    credentials: true
+  })
 );
 
 
