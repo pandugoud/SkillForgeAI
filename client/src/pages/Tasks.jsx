@@ -1,6 +1,13 @@
 import {useEffect,useState} from "react";
 
+import {
+DragDropContext
+} from "@hello-pangea/dnd";
+
+
 import taskService from "../services/taskService";
+
+import KanbanColumn from "../components/KanbanColumn";
 
 
 
@@ -8,15 +15,6 @@ export default function Tasks(){
 
 
 const [tasks,setTasks]=useState([]);
-
-
-const [form,setForm]=useState({
-
-title:"",
-description:"",
-project:""
-
-});
 
 
 
@@ -41,21 +39,45 @@ loadTasks();
 
 
 
-const submit=async(e)=>{
-
-e.preventDefault();
+const updateStatus=async(result)=>{
 
 
-await taskService.createTask(form);
+const {
+destination,
+source
+}=result;
 
 
-setForm({
 
-title:"",
-description:"",
-project:""
+if(!destination)
+return;
 
-});
+
+
+if(
+destination.droppableId ===
+source.droppableId
+)
+return;
+
+
+
+const taskId =
+result.draggableId;
+
+
+
+await taskService.updateTask(
+
+taskId,
+
+{
+status:
+destination.droppableId
+}
+
+);
+
 
 
 loadTasks();
@@ -66,159 +88,99 @@ loadTasks();
 
 
 
+
+const todo =
+tasks.filter(
+task=>task.status==="Todo"
+);
+
+
+
+const progress =
+tasks.filter(
+task=>task.status==="In Progress"
+);
+
+
+
+const completed =
+tasks.filter(
+task=>task.status==="Completed"
+);
+
+
+
+
+
 return (
 
 <div>
 
 
 <h1 className="
-text-3xl
+text-4xl
 font-bold
-mb-8
+mb-10
 ">
 
-Task Management
+Task Board
 
 </h1>
 
 
 
-
-<form
-onSubmit={submit}
-className="space-y-4 mb-10"
+<DragDropContext
+onDragEnd={updateStatus}
 >
-
-
-<input
-
-className="border p-3 w-full"
-
-placeholder="Task title"
-
-value={form.title}
-
-onChange={
-e=>setForm({
-...form,
-title:e.target.value
-})
-}
-
-/>
-
-
-
-<textarea
-
-className="border p-3 w-full"
-
-placeholder="Description"
-
-value={form.description}
-
-onChange={
-e=>setForm({
-...form,
-description:e.target.value
-})
-}
-
-/>
-
-
-
-<input
-
-className="border p-3 w-full"
-
-placeholder="Project ID"
-
-value={form.project}
-
-onChange={
-e=>setForm({
-...form,
-project:e.target.value
-})
-}
-
-/>
-
-
-
-<button
-
-className="
-bg-blue-600
-text-white
-px-5
-py-3
-rounded
-"
-
->
-
-Create Task
-
-</button>
-
-
-</form>
-
-
 
 
 <div className="
 grid
 md:grid-cols-3
-gap-5
+gap-8
 ">
 
 
-{
-tasks.map(task=>(
+<KanbanColumn
 
-<div
+title="Todo"
 
-key={task._id}
+id="Todo"
 
-className="
-bg-white
-shadow
-rounded-xl
-p-5
-"
+tasks={todo}
+
+/>
 
 
->
+
+<KanbanColumn
+
+title="In Progress"
+
+id="In Progress"
+
+tasks={progress}
+
+/>
 
 
-<h2 className="
-font-bold
-text-xl
-">
 
-{task.title}
+<KanbanColumn
 
-</h2>
+title="Completed"
 
+id="Completed"
 
-<p>
+tasks={completed}
 
-{task.status}
-
-</p>
+/>
 
 
 </div>
 
-))
-}
 
+</DragDropContext>
 
-
-</div>
 
 
 </div>
