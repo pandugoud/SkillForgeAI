@@ -17,6 +17,7 @@ const taskRoutes = require("./routes/taskRoutes");
 const aiRoutes = require("./routes/aiRoutes");
 const resumeRoutes = require("./routes/resumeRoutes");
 const roadmapRoutes = require("./routes/roadmapRoutes");
+const progressRoutes = require("./routes/progressRoutes");
 
 // Load environment variables
 dotenv.config();
@@ -94,6 +95,11 @@ resumeRoutes
 app.use(
 "/api/roadmap",
 roadmapRoutes
+);
+
+app.use(
+"/api/progress",
+progressRoutes
 );
 
 // Error Handler

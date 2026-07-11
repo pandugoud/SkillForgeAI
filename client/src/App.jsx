@@ -11,6 +11,7 @@ import Tasks from "./pages/Tasks";
 import AIAssistant from "./pages/AIAssistant";
 import ResumeAnalyzer from "./pages/ResumeAnalyzer";
 import Roadmap from "./pages/Roadmap";
+import Progress from "./pages/Progress";
 
 
 function App() {
@@ -70,6 +71,15 @@ element={<ResumeAnalyzer/>}
 path="/roadmap"
 
 element={<Roadmap/>}
+
+/>
+
+
+<Route
+
+path="/progress"
+
+element={<Progress/>}
 
 />
 
