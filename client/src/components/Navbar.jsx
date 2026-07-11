@@ -1,37 +1,86 @@
-import { Link } from "react-router-dom";
+import {Link} from "react-router-dom";
 
-export default function Navbar() {
+import {useSelector,useDispatch} from "react-redux";
 
-  return (
-    <nav className="bg-gray-900 text-white px-8 py-5 flex justify-between items-center">
-
-      <Link 
-        to="/"
-        className="text-2xl font-bold"
-      >
-        SkillForge AI
-      </Link>
+import {logout} from "../redux/authSlice";
 
 
-      <div className="space-x-6">
 
-        <Link
-          to="/login"
-          className="hover:text-blue-400"
-        >
-          Login
-        </Link>
+export default function Navbar(){
 
 
-        <Link
-          to="/register"
-          className="bg-blue-600 px-5 py-2 rounded-lg hover:bg-blue-700"
-        >
-          Get Started
-        </Link>
+const {isAuthenticated}=useSelector(
+state=>state.auth
+);
 
-      </div>
 
-    </nav>
-  );
+const dispatch=useDispatch();
+
+
+
+return (
+
+<nav className="
+bg-gray-900
+text-white
+px-8
+py-5
+flex
+justify-between
+">
+
+
+<Link to="/" className="text-2xl font-bold">
+SkillForge AI
+</Link>
+
+
+<div>
+
+
+{
+isAuthenticated ?
+
+<button
+
+onClick={()=>dispatch(logout())}
+
+className="bg-red-500 px-4 py-2 rounded"
+
+>
+
+Logout
+
+</button>
+
+:
+
+<>
+
+<Link className="mr-5" to="/login">
+Login
+</Link>
+
+
+<Link 
+className="bg-blue-600 px-4 py-2 rounded"
+to="/register">
+
+Register
+
+</Link>
+
+</>
+
+}
+
+
+</div>
+
+
+</nav>
+
+);
+
+
 }
